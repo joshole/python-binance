@@ -319,6 +319,9 @@ This library includes resources to help AI coding assistants (Claude Code, Curso
 - ``llms-full.txt`` — Complete API reference for LLMs (all 797+ methods with signatures and parameters)
 - ``.agents/skills/python-binance/`` — Agent Skill (works with any `Agent Skills <https://agentskills.io>`_ compatible tool)
 - ``generate_llms_txt.py`` — Script to regenerate the LLM files after library updates
+- ``.claude/skills/`` — Claude Code skills: ``python-binance`` (symlink to the skill above) and ``binance``, the official
+  `Binance Skills Hub <https://github.com/binance/binance-skills-hub>`_ API reference (vendored, see its ``SOURCE.md``)
+- ``.claude/hooks/session-start.sh`` — installs dependencies into ``.venv`` when running in Claude Code on the web
 
 **Install the agent skill** into any project or globally with `npx skills <https://www.npmjs.com/package/skills>`_
 (works with Claude Code, Cursor, Copilot, Gemini CLI, Goose, Roo Code, and 30+ other agents):

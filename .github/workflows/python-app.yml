@@ -24,7 +24,7 @@ jobs:
       with:
         python-version: '3.9'
     - name: Install Ruff
-      run: pip install ruff
+      run: pip install "ruff<0.16"  # ruff 0.16 enables new preview rules the code does not pass yet
     - name: Lint code with Ruff
       run: ruff check --output-format=github --target-version=py39 .
     - name: Check code formatting with Ruff

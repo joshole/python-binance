@@ -9,5 +9,6 @@ requests-mock
 tox
 setuptools
 aioresponses
+aiohttp<3.14  # aioresponses 0.7.9 is not compatible with aiohttp 3.14
 pre-commit
 orjson
