@@ -1,15 +1,12 @@
-================================
-Welcome to python-binance v0.5.6
-================================
+=================================
+Welcome to python-binance v1.0.37
+=================================
 
 .. image:: https://img.shields.io/pypi/v/python-binance.svg
     :target: https://pypi.python.org/pypi/python-binance
 
 .. image:: https://img.shields.io/pypi/l/python-binance.svg
     :target: https://pypi.python.org/pypi/python-binance
-
-.. image:: https://img.shields.io/travis/sammchardy/python-binance.svg
-    :target: https://travis-ci.org/sammchardy/python-binance
 
 .. image:: https://img.shields.io/coveralls/sammchardy/python-binance.svg
     :target: https://coveralls.io/github/sammchardy/python-binance
@@ -20,9 +17,24 @@ Welcome to python-binance v0.5.6
 .. image:: https://img.shields.io/pypi/pyversions/python-binance.svg
     :target: https://pypi.python.org/pypi/python-binance
 
-This is an unofficial Python wrapper for the `Binance exchange REST API v1/3 <https://github.com/binance-exchange/binance-official-api-docs>`_. I am in no way affiliated with Binance, use at your own risk.
+.. image:: https://img.shields.io/badge/Telegram-Join%20Us-blue?logo=Telegram
+    :target: https://t.me/python_binance
 
-If you came here looking for the `Binance exchange <https://www.binance.com/?ref=10099792>`_ to purchase cryptocurrencies, then `go here <https://www.binance.com/?ref=10099792>`_. If you want to automate interactions with Binance stick around.
+
+This is an unofficial Python wrapper for the `Binance exchange REST API v3 <https://binance-docs.github.io/apidocs/spot/en>`_.
+
+If you came here looking for the `Binance exchange <https://accounts.binance.com/register?ref=PGDFCE46>`_ to purchase cryptocurrencies, then `go here <https://accounts.binance.com/register?ref=PGDFCE46>`_.
+If you want to automate interactions with Binance stick around.
+
+.. |ico1| image:: https://avatars.githubusercontent.com/u/31901609?s=48&v=4
+    :target: https://github.com/ccxt/ccxt
+    :height: 3ex
+    :align: middle
+
+**This project is powered by** |ico1|
+
+*Please make sure your* `python-binance` *version is* **v.1.0.20** *or higher.*
+*The previous versions are no longer recommended because some endpoints have been deprecated.*
 
 Source code
   https://github.com/sammchardy/python-binance
@@ -30,27 +42,74 @@ Source code
 Documentation
   https://python-binance.readthedocs.io/en/latest/
 
-Binance API Telegram
-  https://t.me/binance_api_english
+Community Telegram Chat
+  https://t.me/python_binance
+
+Announcements Channel
+  https://t.me/python_binance_announcements
+
+Examples including async
+  https://github.com/sammchardy/python-binance/tree/master/examples
+
+- `Async basics for Binance <https://sammchardy.github.io/binance/2021/05/01/async-binance-basics.html>`_
+- `Understanding Binance Order Filters <https://sammchardy.github.io/binance/2021/05/03/binance-order-filters.html>`_
+
+Make sure you update often and check the `Changelog <https://python-binance.readthedocs.io/en/latest/changelog.html>`_ for new features and bug fixes.
+
+Your contributions, suggestions, and fixes are always welcome! Don't hesitate to open a GitHub issue or reach out to us on our Telegram chat
 
 Features
 --------
 
-- Implementation of General, Market Data and Account endpoints.
-- Simple handling of authentication
+- Implementation of all General, Market Data and Account endpoints.
+- Asyncio implementation
+- Demo trading support (by providing demo=True)
+- Testnet support for Spot, Futures and Vanilla Options (deprecated)
+- Simple handling of authentication include RSA and EDDSA keys
+- Verbose mode for inspecting requests (verbose=True)
 - No need to generate timestamps yourself, the wrapper does it for you
+- RecvWindow sent by default
 - Response exception handling
+- Customizable HTTP headers
 - Websocket handling with reconnection and multiplexed connections
+- CRUD over websockets, create/fetch/edit through websockets for minimum latency.
 - Symbol Depth Cache
+- Historical Kline/Candle fetching function
 - Withdraw functionality
 - Deposit addresses
+- Margin Trading
+- Futures Trading
+- Porfolio Margin Trading
+- Vanilla Options
+- Proxy support (REST and WS)
+- Orjson support for faster JSON parsing
+- Support other domains (.us, .jp, etc)
+- Support for the Gift Card API
+
+Upgrading to v1.0.0+
+--------------------
+
+The breaking changes include the migration from wapi to sapi endpoints which related to the
+wallet endpoints detailed in the `Binance Docs <https://binance-docs.github.io/apidocs/spot/en/#wallet-endpoints>`_
+
+The other breaking change is for websocket streams and the Depth Cache Manager which have been
+converted to use Asynchronous Context Managers. See examples in the Async section below or view the
+`websockets <https://python-binance.readthedocs.io/en/latest/websockets.html>`_ and
+`depth cache <https://python-binance.readthedocs.io/en/latest/depth_cache.html>`_ docs.
 
 Quick Start
 -----------
 
-`Register an account with Binance <https://www.binance.com/register.html?ref=10099792>`_.
+`Register an account with Binance <https://accounts.binance.com/register?ref=PGDFCE46>`_.
 
-`Generate an API Key <https://www.binance.com/userCenter/createApi.html>`_ and assign relevant permissions.
+`Generate an API Key <https://www.binance.com/en/my/settings/api-management>`_ and assign relevant permissions.
+
+If you are using an exchange from the US, Japan or other TLD then make sure pass `tld='us'` when creating the
+client.
+
+To use the `Spot <https://testnet.binance.vision/>`_, `Vanilla Options <https://testnet.binanceops.com/>`_ , or `Futures <https://testnet.binancefuture.com>`_ Testnet
+pass `testnet=True` when creating the client.
+
 
 .. code:: bash
 
@@ -59,14 +118,14 @@ Quick Start
 
 .. code:: python
 
-    from binance.client import Client
+    from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
     client = Client(api_key, api_secret)
 
     # get market depth
     depth = client.get_order_book(symbol='BNBBTC')
 
-    # place market buy order
-    order = client.create_order(
+    # place a test market buy order, to place an actual order use the create_order function
+    order = client.create_test_order(
         symbol='BNBBTC',
         side=Client.SIDE_BUY,
         type=Client.ORDER_TYPE_MARKET,
@@ -77,15 +136,13 @@ Quick Start
 
     # withdraw 100 ETH
     # check docs for assumptions around withdrawals
-    from binance.exceptions import BinanceApiException, BinanceWithdrawException
+    from binance.exceptions import BinanceAPIException
     try:
         result = client.withdraw(
             asset='ETH',
             address='<eth_address>',
             amount=100)
-    except BinanceApiException as e:
-        print(e)
-    except BinanceWithdrawException as e:
+    except BinanceAPIException as e:
         print(e)
     else:
         print("Success")
@@ -94,41 +151,201 @@ Quick Start
     withdraws = client.get_withdraw_history()
 
     # fetch list of ETH withdrawals
-    eth_withdraws = client.get_withdraw_history('ETH)
+    eth_withdraws = client.get_withdraw_history(coin='ETH')
 
-    # get a deposit address
-    address = client.get_deposit_address('BTC)
+    # get a deposit address for BTC
+    address = client.get_deposit_address(coin='BTC')
 
-    # start trade websocket
-    def process_message(msg):
-        print("message type: {}".format(msg['e']))
+    # get historical kline data from any date range
+
+    # fetch 1 minute klines for the last day up until now
+    klines = client.get_historical_klines("BNBBTC", Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
+
+    # fetch 30 minute klines for the last month of 2017
+    klines = client.get_historical_klines("ETHBTC", Client.KLINE_INTERVAL_30MINUTE, "1 Dec, 2017", "1 Jan, 2018")
+
+    # fetch weekly klines since it listed
+    klines = client.get_historical_klines("NEOBTC", Client.KLINE_INTERVAL_1WEEK, "1 Jan, 2017")
+
+    # create conditional order using the dedicated method
+    algo_order = client.futures_create_algo_order(symbol="LTCUSDT", side="BUY", type="STOP_MARKET", quantity=0.1, triggerPrice = 120)
+
+    # create conditional order using the create_order method (will redirect to the algoOrder as well)
+    order2 = await client.futures_create_order(symbol="LTCUSDT", side="BUY", type="STOP_MARKET", quantity=0.1, triggerPrice = 120)
+
+    # cancel algo/conditional order
+    cancel2 = await client.futures_cancel_algo_order(orderId=order2["orderId"], symbol="LTCUSDT")
+
+    # fetch open algo/conditional orders
+    open_orders = await client.futures_get_open_algo_orders(symbol="LTCUSDT")
+
+    # create order through websockets
+    order_ws = client.ws_create_order( symbol="LTCUSDT", side="BUY", type="MARKET", quantity=0.1)
+
+    # get account using custom headers
+    account = client.get_account(headers={'MyCustomKey': 'MyCustomValue'})
+
+    # socket manager using threads
+    twm = ThreadedWebsocketManager()
+    twm.start()
+
+    # depth cache manager using threads
+    dcm = ThreadedDepthCacheManager()
+    dcm.start()
+
+    def handle_socket_message(msg):
+        print(f"message type: {msg['e']}")
         print(msg)
-        # do something
 
-    from binance.websockets import BinanceSocketManager
-    bm = BinanceSocketManager(client)
-    bm.start_aggtrade_socket(symbol='BNBBTC')
-    bm.start()
+    def handle_dcm_message(depth_cache):
+        print(f"symbol {depth_cache.symbol}")
+        print("top 5 bids")
+        print(depth_cache.get_bids()[:5])
+        print("top 5 asks")
+        print(depth_cache.get_asks()[:5])
+        print("last update time {}".format(depth_cache.update_time))
+
+    twm.start_kline_socket(callback=handle_socket_message, symbol='BNBBTC')
+
+    dcm.start_depth_cache(callback=handle_dcm_message, symbol='ETHBTC')
+
+    # replace with a current options symbol
+    options_symbol = 'BTC-241227-41000-C'
+    dcm.start_options_depth_cache(callback=handle_dcm_message, symbol=options_symbol)
+
+    # join the threaded managers to the main thread
+    twm.join()
+    dcm.join()
 
 For more `check out the documentation <https://python-binance.readthedocs.io/en/latest/>`_.
 
-Donate
-------
+Async Example
+-------------
 
-If this library helped you out feel free to donate.
+Read `Async basics for Binance <https://sammchardy.github.io/binance/2021/05/01/async-binance-basics.html>`_
+for more information.
 
-- ETH: 0x79c9A113d63B6AC024c1AAae6f6419721C3611A3
-- NEO: AVJB4ZgN7VgSUtArCt94y7ZYT6d5NDfpBo
-- BTC: 1Dknp6L6oRZrHDECRedihPzx2sSfmvEBys
+.. code:: python
+
+    import asyncio
+    import json
+
+    from binance import AsyncClient, DepthCacheManager, BinanceSocketManager
+
+    async def main():
+
+        # initialise the client
+        client = await AsyncClient.create()
+
+        # run some simple requests
+        print(json.dumps(await client.get_exchange_info(), indent=2))
+
+        print(json.dumps(await client.get_symbol_ticker(symbol="BTCUSDT"), indent=2))
+
+        # initialise websocket factory manager
+        bsm = BinanceSocketManager(client)
+
+        # create listener using async with
+        # this will exit and close the connection after 5 messages
+        async with bsm.trade_socket('ETHBTC') as ts:
+            for _ in range(5):
+                res = await ts.recv()
+                print(f'recv {res}')
+
+        # get historical kline data from any date range
+
+        # fetch 1 minute klines for the last day up until now
+        klines = client.get_historical_klines("BNBBTC", AsyncClient.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
+
+        # use generator to fetch 1 minute klines for the last day up until now
+        async for kline in await client.get_historical_klines_generator("BNBBTC", AsyncClient.KLINE_INTERVAL_1MINUTE, "1 day ago UTC"):
+            print(kline)
+
+        # fetch 30 minute klines for the last month of 2017
+        klines = await client.get_historical_klines("ETHBTC", Client.KLINE_INTERVAL_30MINUTE, "1 Dec, 2017", "1 Jan, 2018")
+
+        # fetch weekly klines since it listed
+        klines = await client.get_historical_klines("NEOBTC", Client.KLINE_INTERVAL_1WEEK, "1 Jan, 2017")
+
+
+        # create order through websockets
+        order_ws = await client.ws_create_order( symbol="LTCUSDT", side="BUY", type="MARKET", quantity=0.1)
+
+        # setup an async context the Depth Cache and exit after 5 messages
+        async with DepthCacheManager(client, symbol='ETHBTC') as dcm_socket:
+            for _ in range(5):
+                depth_cache = await dcm_socket.recv()
+                print(f"symbol {depth_cache.symbol} updated:{depth_cache.update_time}")
+                print("Top 5 asks:")
+                print(depth_cache.get_asks()[:5])
+                print("Top 5 bids:")
+                print(depth_cache.get_bids()[:5])
+
+        # Vanilla options Depth Cache works the same, update the symbol to a current one
+        options_symbol = 'BTC-241227-41000-C'
+        async with OptionsDepthCacheManager(client, symbol=options_symbol) as dcm_socket:
+            for _ in range(5):
+                depth_cache = await dcm_socket.recv()
+                count += 1
+                print(f"symbol {depth_cache.symbol} updated:{depth_cache.update_time}")
+                print("Top 5 asks:")
+                print(depth_cache.get_asks()[:5])
+                print("Top 5 bids:")
+                print(depth_cache.get_bids()[:5])
+
+        await client.close_connection()
+
+    if __name__ == "__main__":
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+
+
+The library is under `MIT license`, that means it's absolutely free for any developer to build commercial and opensource software on top of it, but use it at your own risk with no warranties, as is.
+
+
+Orjson support
+-------------------
+
+Python-binance also supports `orjson` for parsing JSON since it is much faster than the builtin library. This is especially important when using websockets because some exchanges return big messages that need to be parsed and dispatched as quickly as possible.
+
+However, `orjson` is not enabled by default because it is not supported by every python interpreter. If you want to opt-in, you just need to install it (`pip install orjson`) on your local environment. Python-binance will detect the installion and pick it up automatically.
+
+LLM & AI Agent Support
+----------------------
+
+This library includes resources to help AI coding assistants (Claude Code, Cursor, Copilot, etc.):
+
+- ``llms.txt`` — Concise library overview for LLMs (`llmstxt.org <https://llmstxt.org>`_ standard)
+- ``llms-full.txt`` — Complete API reference for LLMs (all 797+ methods with signatures and parameters)
+- ``.agents/skills/python-binance/`` — Agent Skill (works with any `Agent Skills <https://agentskills.io>`_ compatible tool)
+- ``generate_llms_txt.py`` — Script to regenerate the LLM files after library updates
+- ``.claude/skills/`` — Claude Code skills: ``python-binance`` (symlink to the skill above) and ``binance``, the official
+  `Binance Skills Hub <https://github.com/binance/binance-skills-hub>`_ API reference (vendored, see its ``SOURCE.md``)
+- ``.claude/hooks/session-start.sh`` — installs dependencies into ``.venv`` when running in Claude Code on the web
+
+**Install the agent skill** into any project or globally with `npx skills <https://www.npmjs.com/package/skills>`_
+(works with Claude Code, Cursor, Copilot, Gemini CLI, Goose, Roo Code, and 30+ other agents):
+
+.. code:: bash
+
+    # Install into the current project
+    npx -y skills add sammchardy/python-binance
+
+    # Install globally (available in all projects)
+    npx -y skills add sammchardy/python-binance --global
+
+Star history
+------------
+
+.. image:: https://api.star-history.com/svg?repos=sammchardy/python-binance&type=Date
+    :target: https://api.star-history.com/svg?repos=sammchardy/python-binance&type=Date
+
+Contact Us
+----------
+
+For business inquiries: `info@ccxt.trade`
 
 Other Exchanges
 ---------------
-
-If you use `Quoinex <https://accounts.quoinex.com/sign-up?affiliate=PAxghztC67615>`_
-or `Qryptos <https://accounts.qryptos.com/sign-up?affiliate=PAxghztC67615>`_ check out my `python-quoine <https://github.com/sammchardy/python-quoine>`_ library.
-
-If you use `Kucoin <https://www.kucoin.com/#/?r=E42cWB>`_ check out my `python-kucoin <https://github.com/sammchardy/python-kucoin>`_ library.
-
-If you use `IDEX <https://idex.market>`_ check out my `python-idex <https://github.com/sammchardy/python-idex>`_ library.
-
-.. image:: https://analytics-pixel.appspot.com/UA-111417213-1/github/python-binance?pixel&useReferer
+- Check out `CCXT <https://github.com/ccxt/ccxt>`_ for more than 100 crypto exchanges with a unified trading API.
+- If you use `Kucoin <https://www.kucoin.com/ucenter/signup?rcode=E5wkqe>`_ check out my `python-kucoin <https://github.com/sammchardy/python-kucoin>`_ library.

@@ -10,13 +10,16 @@ Contents
    :maxdepth: 2
 
    overview
-   enums
+   constants
    general
    market_data
    account
+   sub_accounts
+   margin
    websockets
    depth_cache
    withdraw
+   helpers
    exceptions
    faqs
    changelog
@@ -27,5 +30,3 @@ Index
 ==================
 
 * :ref:`genindex`
-
-.. image:: https://analytics-pixel.appspot.com/UA-111417213-1/github/python-binance/docs/index?pixel

@@ -1,44 +1,58 @@
 Binance API
 ===========
 
-client module
-----------------------
+Client module
+-------------
 
 .. automodule:: binance.client
     :members:
     :undoc-members:
     :show-inheritance:
 
-depthcache module
---------------------------
+Async client module
+-------------------
 
-.. automodule:: binance.depthcache
+.. automodule:: binance.async_client
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Websockets module
+-----------------
+
+.. automodule:: binance.ws.streams
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Threaded streams module
+-----------------------
+
+.. automodule:: binance.ws.threaded_stream
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+depthcache module
+-----------------
+
+.. automodule:: binance.ws.depthcache
     :members:
     :undoc-members:
     :show-inheritance:
 
 exceptions module
---------------------------
+-----------------
 
 .. automodule:: binance.exceptions
     :members:
     :undoc-members:
     :show-inheritance:
 
-validation module
---------------------------
+helpers module
+--------------
 
-.. automodule:: binance.validation
+.. automodule:: binance.helpers
     :members:
     :undoc-members:
     :show-inheritance:
-
-websockets module
---------------------------
-
-.. automodule:: binance.websockets
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. image:: https://analytics-pixel.appspot.com/UA-111417213-1/github/python-binance/docs/binance?pixel
